@@ -45,7 +45,12 @@ def track(path, start_frame, duration, x, y, w):
 
             # Crop image to behavior box
             im = bw[y - int(w*0.1) : y + int(w*1.1), x - int(w*0.1) : x + int(w*1.1)]
-
+            #im = bw[y:(y+w), x:(x+w)]
+            im[:int(w*0.1), :] = 255
+            im[int(w*0.1) + w:] = 255
+            im[:,:int(w*0.1)] = 255
+            im[:,int(w*0.1) + w:] = 255
+            
             centroids.append(mouse_centroid(im, centroids[i-start_frame]))
 
         i += 1
@@ -109,9 +114,10 @@ def mouse_centroid(im, previous_centroid):
     if len(centroids) == 1:
         return list(centroids[0])
     elif len(centroids) > 1:
-        areas = [r.area for r in regionprops(labels)]
-        a_idx = np.array(areas == np.max(areas))
-        return list(np.array(centroids)[a_idx][0])
+        d = lambda a, b: ((a[0] - b[0])**2 + (a[1] - b[1])**2)**0.5
+        dists = [d(c, previous_centroid) for c in centroids]
+        d_idx = np.array(dists == np.min(dists))
+        return list(np.array(centroids)[d_idx][0])
 
 def save_tracking_output(filtered_state_means, path):
     """
