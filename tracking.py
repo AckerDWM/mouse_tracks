@@ -68,7 +68,7 @@ def kalman(centroids):
         centroids = mouse centroid positions as a time series
         
     Returns:
-        A kalman filter intance
+        A kalman filter instance
     """
     Transition_Matrix = [[1,0,1,0],[0,1,0,1],[0,0,1,0],[0,0,0,1]]
     Observation_Matrix = [[1,0,0,0],[0,1,0,0]]
